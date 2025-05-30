@@ -16,6 +16,7 @@ Step 1: Create Project Structure
     ````
 Step 2: Write FastAPI Code
     app/main.py
+    `
     ````
     # app/main.py
 from fastapi import FastAPI
@@ -39,7 +40,7 @@ def get_dados():
 def get_dado(id: int):
     return df[df["id"] == id].to_dict(orient="records")
     ````
-    
+
 Step 3: Write Dockerfile
     Dockerfile
     ````
