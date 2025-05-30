@@ -1,5 +1,23 @@
 # churn-prediction-unlocking-retention-secrets
 
+Step 1: Create Project Structure
+    ```
+        todo-app/
+    ├── app/
+    │   ├── __init__.py
+    │   ├── main.py         # FastAPI app
+    │   ├── models.py       # Pydantic models
+    │   └── database.py     # Mock DB
+    ├── requirements.txt
+    ├── Dockerfile
+    └── .vscode/            # VS Code configs
+        ├── launch.json     # Debug config
+        └── settings.json
+    ```
+Step 2: Write FastAPI Code
+    app/main.py
+
+
 Passo a Passo: FastAPI + Kubernetes + Visualização
 1. FastAPI: Criando a API de Dados
 Um exemplo simples de API para consultar dados:
