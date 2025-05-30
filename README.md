@@ -1,5 +1,176 @@
 # churn-prediction-unlocking-retention-secrets
 
+Passo a Passo: FastAPI + Kubernetes + Visualização
+1. FastAPI: Criando a API de Dados
+Um exemplo simples de API para consultar dados:
+
+python
+# app/main.py
+from fastapi import FastAPI
+import pandas as pd
+from pydantic import BaseModel
+
+app = FastAPI()
+
+# Mock de dados (poderia ser um banco de dados real)
+df = pd.DataFrame({
+    "id": [1, 2, 3],
+    "nome": ["Alice", "Bob", "Charlie"],
+    "vendas": [100, 200, 150]
+})
+
+@app.get("/dados")
+def get_dados():
+    return df.to_dict(orient="records")
+
+@app.get("/dados/{id}")
+def get_dado(id: int):
+    return df[df["id"] == id].to_dict(orient="records")
+Dockerfile para o FastAPI
+
+dockerfile
+FROM python:3.9
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+2. Kubernetes: Implantando o FastAPI
+2.1. Deployment do FastAPI
+yaml
+# k8s/fastapi-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fastapi
+  template:
+    metadata:
+      labels:
+        app: fastapi
+    spec:
+      containers:
+      - name: fastapi
+        image: seu-registry/fastapi-data:latest
+        ports:
+        - containerPort: 8000
+2.2. Service (LoadBalancer para acesso externo)
+yaml
+# k8s/fastapi-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8000
+  selector:
+    app: fastapi
+3. Visualização dos Dados
+Opção 1: Streamlit (Dashboard Interativo)
+python
+# dashboard/streamlit_app.py
+import streamlit as st
+import requests
+
+st.title("Dashboard de Vendas")
+data = requests.get("http://fastapi-service/dados").json()  # Chama a API FastAPI
+st.write(pd.DataFrame(data))
+Deployment do Streamlit no K8s
+
+yaml
+# k8s/streamlit-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamlit-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streamlit
+  template:
+    spec:
+      containers:
+      - name: streamlit
+        image: seu-registry/streamlit-dash:latest
+        ports:
+        - containerPort: 8501
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: streamlit-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8501
+  selector:
+    app: streamlit
+Opção 2: Grafana (Visualização em Tempo Real)
+Conecta no Prometheus (coletando métricas do FastAPI)
+
+Ou direto em um banco de dados (PostgreSQL)
+
+yaml
+# k8s/grafana-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    spec:
+      containers:
+      - name: grafana
+        image: grafana/grafana
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: grafana
+Fluxo Completo
+FastAPI expõe os dados via API (/dados, /dados/{id}).
+
+Streamlit consome a API e gera dashboards interativos.
+
+Grafana monitora métricas (requisições, tempo de resposta).
+
+Kubernetes gerencia a escalabilidade e disponibilidade.
+
+Benefícios para o Analista de Dados
+✅ APIs escaláveis para servir dados em tempo real.
+✅ Dashboards atualizados automaticamente (Streamlit + FastAPI).
+✅ Monitoramento em tempo real (Grafana + Prometheus).
+✅ Ambiente reproduzível (K8s evita problemas de "funciona na minha máquina").
+
+Próximos Passos
+Quer adicionar um banco de dados (PostgreSQL, MongoDB)?
+
+Precisa de autenticação JWT no FastAPI?
+
+Quer processamento em batch (Spark, Dask) no cluster K8s?
+
 1. Estrutura de Diretórios do Projeto:
 ````
 nome_do_projeto/
