@@ -3,6 +3,19 @@
 Step 1: Create Project Structure
     ````
         todo-app/
+        ├── app/
+        │   ├── __init__.py
+        │   ├── main.py
+        │   ├── models.py
+        │   └── database.py
+        ├── requirements.txt
+        ├── Dockerfile
+        └── .vscode/
+            ├── launch.json
+            └── settings.json
+    ````
+    
+    ````
     ├── app/
     │   ├── __init__.py
     │   ├── main.py         # FastAPI app
