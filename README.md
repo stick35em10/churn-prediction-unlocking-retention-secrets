@@ -1,7 +1,7 @@
 # churn-prediction-unlocking-retention-secrets
 
 Step 1: Create Project Structure
-    ```
+    ````
         todo-app/
     ├── app/
     │   ├── __init__.py
@@ -13,7 +13,7 @@ Step 1: Create Project Structure
     └── .vscode/            # VS Code configs
         ├── launch.json     # Debug config
         └── settings.json
-    ```
+    ````
 Step 2: Write FastAPI Code
     app/main.py
 
